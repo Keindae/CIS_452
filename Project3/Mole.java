@@ -26,7 +26,7 @@ public class Mole extends JFrame implements ActionListener{
 	private JMenu menus;
 	private JMenuBar menu;
 	private JMenuItem start;
-	private JPanel centerPanel, southPanel, southPanel2;
+	private JPanel centerPanel, southPanel;
 	private JLabel score, missed;
 	private static int gameScore, missScore;
 	private static JTextArea scoreText, missText;
@@ -34,11 +34,10 @@ public class Mole extends JFrame implements ActionListener{
 	private static Color moleDown = Color.WHITE;
 	private static String down = "()";
 	private static String up = "Mole Up";
-	int userResult = 8;
+	int userResult = 8, userResult3;
 	static int userResult2;
-	String userSize, userMoles;
-	//private static final int MAX_MOLES = 5;
-	//private static int MAX_GAME = 8;
+	String userSize, userMoles, userTime;
+	int gameTime;
 	private static Semaphore semaphore;
 	private JButton[][] buttons;
 	private Thread[][] moleThreads;
@@ -53,7 +52,7 @@ public class Mole extends JFrame implements ActionListener{
 		//sets the closing option
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		centerPanel = new JPanel();
-		southPanel = new JPanel(new GridLayout(0,2));
+		southPanel = new JPanel(new GridLayout(0,3));
 		this.setLayout(new BorderLayout());
 		//Hardcoded the size of the buttons and game
 		this.addButtons( userResult);
@@ -66,7 +65,6 @@ public class Mole extends JFrame implements ActionListener{
 		//and text areas to store the score
 		score = new JLabel("SCORE:");
 		missed = new JLabel("Missed Clicked Moles:");
-		missed.setLabelFor(missText);
 		missed.setVisible(true);
 		score.setVisible(true);
 		southPanel.add(missed);
@@ -196,6 +194,72 @@ public class Mole extends JFrame implements ActionListener{
 		menu = new JMenuBar();
 		menu.add(menus);
 	}
+	/****************************************************************************
+	 * Prompts the user over and over again for the correct number format for 
+	 * the board size. Once the user inputs it correctly, it will move on to 
+	 * mole set up.
+	 ***************************************************************************/
+	private int setUpBoardSize(String size){
+		userSize = JOptionPane.showInputDialog("Please input the size "
+				+ "that you want the board to be");
+		try{
+			userResult = Integer.parseInt(userSize);
+		}
+		catch(NumberFormatException e1){
+			JOptionPane.showMessageDialog(null, "Improper Number format - Integers"
+					+ "only! (1-10)");
+			return 0;
+		}
+		return 1;
+	}
+	
+	/****************************************************************************
+	 * Prompts the user over and over again for the correct number format for 
+	 * the mole number. Once the user inputs it correctly, it will move on and 
+	 * prompt the user for the time to play the game
+	 ***************************************************************************/
+	private int setUpMoleNumber(String mole){
+		userMoles = JOptionPane.showInputDialog("Please enter the number "
+				+ "of moles you want visible at a time");
+		try{
+			userResult2 = Integer.parseInt(userMoles);
+		}catch(NumberFormatException e1){
+			JOptionPane.showMessageDialog(null, "Improper Number format - Integers"
+					+ "only! (1-10)");
+			return 0;
+		}
+		return 1;
+	}
+	
+	/****************************************************************************
+	 * Prompts the user over and over again for the correct number format for 
+	 * the time to play the game. Once the user inputs it correctly, it will 
+	 * move on and start the game.
+	 ***************************************************************************/
+	private int userTime(String time){
+		userTime = JOptionPane.showInputDialog("Please enter the ammount of time"
+				+ "you want to play the game!");
+		try{
+			userResult3 = Integer.parseInt(userTime);
+		}catch(NumberFormatException e1){
+			JOptionPane.showMessageDialog(null, "Improper Number format - Integers"
+					+ "only! (1-10)");
+			return 0;
+		}
+		return 1;
+	}
+	
+	
+	public void gameTimer(int time){
+		Timer gameTimer = new Timer(time * 1000, new ActionListener(){
+			public void actionPerformed(ActionEvent evt){
+				JOptionPane.showMessageDialog(null, "The time is up!");	
+				centerPanel.removeAll();
+			}
+		});
+		gameTimer.setRepeats(false);
+		gameTimer.start();
+	}
 
 	/*****************************************************************************
 	 * Actionlistener to fire off events based on what the
@@ -207,13 +271,23 @@ public class Mole extends JFrame implements ActionListener{
 		if(e.getSource() == start){
 			//JOptionPanes for the user to input the size and the number
 			//Moles that they want to play the game.
-			userSize = JOptionPane.showInputDialog("Please input the size "
-					+ "that you want the board to be");
-			userResult = Integer.parseInt(userSize);
+			while(true){
+				if(setUpBoardSize(userSize) == 1){
+					break;
+				}
+			}
+			while(true){
+				if(setUpMoleNumber(userMoles) == 1){
+					break;
+				}
+			}
+			while(true){
+				if(userTime(userTime) == 1){
+					break;
+				}
+			}
 			this.addButtons(userResult);
-			userMoles = JOptionPane.showInputDialog("Please enter the number "
-					+ "of moles you want visible at a time");
-			userResult2 = Integer.parseInt(userMoles);
+			gameTimer(userResult3);
 			if(userResult2 > userResult * userResult){
 				JOptionPane.showMessageDialog(null, "You entered a mole size larger"
 						+ "than the board, setting the mole number to 1");
@@ -250,7 +324,8 @@ public class Mole extends JFrame implements ActionListener{
 					if(buttons[i][j].getText() == down
 							&& buttons[i][j].getBackground() == moleDown){
 						missScore++;
-						missText.setText("" + missScore);
+						missText.setText("" + missScore); 
+						buttons[i][j].setBackground(Color.RED);
 					}else{
 
 					}

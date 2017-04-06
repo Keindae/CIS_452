@@ -34,9 +34,12 @@ public class Mole extends JFrame implements ActionListener{
 	private static Color moleDown = Color.WHITE;
 	private static String down = "()";
 	private static String up = "Mole Up";
-	private static final int MAX_MOLES = 5;
-	private static int MAX_GAME = 8
-	private static Semaphore semaphore = new Semaphore(MAX_MOLES);
+	int userResult = 8;
+	static int userResult2;
+	String userSize, userMoles;
+	//private static final int MAX_MOLES = 5;
+	//private static int MAX_GAME = 8;
+	private static Semaphore semaphore;
 	private JButton[][] buttons;
 	private Thread[][] moleThreads;
 	Random random = new Random();
@@ -53,7 +56,7 @@ public class Mole extends JFrame implements ActionListener{
 		southPanel = new JPanel(new GridLayout(0,2));
 		this.setLayout(new BorderLayout());
 		//Hardcoded the size of the buttons and game
-		this.addButtons(MAX_GAME);
+		this.addButtons( userResult);
 		this.add(centerPanel, BorderLayout.CENTER);
 		this.setSize(400, 450);
 		this.setVisible(true);
@@ -87,11 +90,12 @@ public class Mole extends JFrame implements ActionListener{
 	 ****************************************************************************/
 	public void addButtons(int numberOfButtons){
 		buttons = new JButton[numberOfButtons][numberOfButtons];
+		centerPanel.removeAll();
 		centerPanel.setLayout(new GridLayout(numberOfButtons, numberOfButtons));
 		//Loops through the entire array
 		for(int i = 0; i<numberOfButtons; i++){
 			for(int j = 0; j<numberOfButtons; j++){
-			//creates a new JButton at each location
+				//creates a new JButton at each location
 				buttons[i][j] = new JButton();
 				//Setting the opacity to have the correct color show up
 				buttons[i][j].setOpaque(true);
@@ -106,8 +110,8 @@ public class Mole extends JFrame implements ActionListener{
 	private class MoleThread implements Runnable{
 		private JButton button;
 		/***************************************************************************
-		* Sets up the default look of the buttons
-		***************************************************************************/
+		 * Sets up the default look of the buttons
+		 ***************************************************************************/
 		public MoleThread(JButton button){
 			this.button = button;
 			this.button.setBackground(moleDown);
@@ -174,16 +178,16 @@ public class Mole extends JFrame implements ActionListener{
 	}
 
 	/*****************************************************************************
-	* Main program to run the program.
-	*****************************************************************************/
+	 * Main program to run the program.
+	 *****************************************************************************/
 	public static void main(String args[]){
 		Mole mole = new Mole();
 	}
 
 	/*****************************************************************************
-	* Sets up the user menu for them to start the game
-	* Very basic only has a start button to get the game rolling
-	*****************************************************************************/
+	 * Sets up the user menu for them to start the game
+	 * Very basic only has a start button to get the game rolling
+	 *****************************************************************************/
 	private void setupMenus(){
 		menus = new JMenu("Menu");
 		start = new JMenuItem("Start");
@@ -201,11 +205,26 @@ public class Mole extends JFrame implements ActionListener{
 		//If the user presses "Start", then it will create a thread for each button
 		//inside of the array of buttons
 		if(e.getSource() == start){
-			moleThreads = new Thread[MAX_GAME][MAX_GAME];
-			for(int i = 0; i < MAX_GAME; i++){
-				for(int j = 0; j < MAX_GAME; j++){
+			//JOptionPanes for the user to input the size and the number
+			//Moles that they want to play the game.
+			userSize = JOptionPane.showInputDialog("Please input the size "
+					+ "that you want the board to be");
+			userResult = Integer.parseInt(userSize);
+			this.addButtons(userResult);
+			userMoles = JOptionPane.showInputDialog("Please enter the number "
+					+ "of moles you want visible at a time");
+			userResult2 = Integer.parseInt(userMoles);
+			if(userResult2 > userResult * userResult){
+				JOptionPane.showMessageDialog(null, "You entered a mole size larger"
+						+ "than the board, setting the mole number to 1");
+				semaphore = new Semaphore(1);
+			}else{
+				semaphore = new Semaphore(userResult2);
+			}
+			moleThreads = new Thread[userResult][userResult];
+			for(int i = 0; i < userResult; i++){
+				for(int j = 0; j < userResult; j++){
 					Thread mole = new Thread(new MoleThread(buttons[i][j]));
-					buttons[i][j].setText("()");
 					moleThreads[i][j] = mole;
 					mole.start();
 				}
@@ -214,8 +233,8 @@ public class Mole extends JFrame implements ActionListener{
 		//Loops through the button array and checks to see if the position the user
 		//clicked, and then increments based on what was clicked.
 
-		for(int i = 0; i < MAX_GAME; i++){
-			for(int j = 0; j < MAX_GAME; j++){
+		for(int i = 0; i <  userResult; i++){
+			for(int j = 0; j <  userResult; j++){
 				if(buttons[i][j] == e.getSource()){
 					//This is checking to see if the user clicked the "mole up", if so,
 					//The thread will then release its semaphore to be accessed by a

@@ -195,8 +195,8 @@ public class Mole extends JFrame implements ActionListener{
 		menu.add(menus);
 	}
 	/****************************************************************************
-	 * Prompts the user over and over again for the correct number format for 
-	 * the board size. Once the user inputs it correctly, it will move on to 
+	 * Prompts the user over and over again for the correct number format for
+	 * the board size. Once the user inputs it correctly, it will move on to
 	 * mole set up.
 	 ***************************************************************************/
 	private int setUpBoardSize(String size){
@@ -212,10 +212,10 @@ public class Mole extends JFrame implements ActionListener{
 		}
 		return 1;
 	}
-	
+
 	/****************************************************************************
-	 * Prompts the user over and over again for the correct number format for 
-	 * the mole number. Once the user inputs it correctly, it will move on and 
+	 * Prompts the user over and over again for the correct number format for
+	 * the mole number. Once the user inputs it correctly, it will move on and
 	 * prompt the user for the time to play the game
 	 ***************************************************************************/
 	private int setUpMoleNumber(String mole){
@@ -230,10 +230,10 @@ public class Mole extends JFrame implements ActionListener{
 		}
 		return 1;
 	}
-	
+
 	/****************************************************************************
-	 * Prompts the user over and over again for the correct number format for 
-	 * the time to play the game. Once the user inputs it correctly, it will 
+	 * Prompts the user over and over again for the correct number format for
+	 * the time to play the game. Once the user inputs it correctly, it will
 	 * move on and start the game.
 	 ***************************************************************************/
 	private int userTime(String time){
@@ -248,12 +248,12 @@ public class Mole extends JFrame implements ActionListener{
 		}
 		return 1;
 	}
-	
-	
+
+
 	public void gameTimer(int time){
 		Timer gameTimer = new Timer(time * 1000, new ActionListener(){
 			public void actionPerformed(ActionEvent evt){
-				JOptionPane.showMessageDialog(null, "The time is up!");	
+				JOptionPane.showMessageDialog(null, "The time is up!");
 				centerPanel.removeAll();
 			}
 		});
@@ -324,7 +324,7 @@ public class Mole extends JFrame implements ActionListener{
 					if(buttons[i][j].getText() == down
 							&& buttons[i][j].getBackground() == moleDown){
 						missScore++;
-						missText.setText("" + missScore); 
+						missText.setText("" + missScore);
 						buttons[i][j].setBackground(Color.RED);
 					}else{
 

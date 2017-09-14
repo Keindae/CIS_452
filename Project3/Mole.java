@@ -52,7 +52,7 @@ public class Mole extends JFrame implements ActionListener{
 		//sets the closing option
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		centerPanel = new JPanel();
-		southPanel = new JPanel(new GridLayout(0,3));
+		southPanel = new JPanel(new GridLayout(0,2));
 		this.setLayout(new BorderLayout());
 		//Hardcoded the size of the buttons and game
 		this.addButtons( userResult);
